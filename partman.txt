@@ -1,0 +1,175 @@
+
+# refs
+# [1] https://cptyesterday.wordpress.com/2012/06/17/notes-on-using-expert_recipe-in-debianubuntu-preseed-files/
+# [2] https://cookingclouds.com/2012/07/17/ubuntudebian-preseeding-with-lvm/
+# [3] https://gist.github.com/lorin/5140029
+# [4] https://serverfault.com/questions/722021/preseeding-debian-install-efi
+# [5] https://flugel.it/2016/08/24/preseed-notes-autopartition-with-lvm/
+
+# [1]:
+# d-i partman-lvm/confirm boolean true
+# d-i partman-auto-lvm/new_vg_name string @@VG_NAME@@	# [5] also
+# d-i partman-auto-lvm/guided_size string 30GB	# says it must be greater than or equal to the size of all lvs
+
+# [3]:
+# d-i partman-auto/method string lvm
+# remove pre-existing lvm:
+# d-i partman	partman-lvm/device_remove_lvm boolean true
+# d-i partman-lvm/confirm_nooverwrite boolean true
+# d-i partman-partitioning/confirm_write_new_label boolean true	# also [5]
+# d-i partman/choose_partition select finish	# [5] has Finish partitioning and write changes to disk
+# d-i partman/confirm boolean true	# also [5]
+# d-i partman/confirm_nooverwrite boolean true
+
+# d-i partman/default_filesystem	string btrfs	# [4] I'm guessing this would allow $default_filesystem below
+
+# [5]
+# d-i partman-auto/disk string /dev/sda	# or /dev/vda for kvmish
+# d-i partman-lvm/device_remove_lvm boolean true
+# d-i partman-auto/method string lvm
+# d-i partman-lvm/confirm boolean true
+# d-i partman-auto/choose_recipe select dm_unencrypted
+# the filesystem outside of the filesystem{ } clause is the partition type. That helps!
+
+# d-i partman-auto/expert_recipe string	....
+
+dm_unencrypted :	# may need double :
+
+# I'm confused about what unit the size is in.
+# Based on the comit "Tweak size for /boot again from between 256 and 512M to between 512 and 768M" it is in MB
+
+# I'm not sure if $primary{ } is needed at all for GPT
+
+# So the /boot/efi partition is still confusing to me. The examples I'm seeing do NOT specify a filesystem or mountpoint
+128 128 128 free	# this might be esp or the like in the future....
+	$iflabel{ gpt }	# Apparently the first one of these specifies the partition table type
+	$reusemethod{ }	# This may cause it to be reused if it exists. I guess I'm good with this.
+	# $primary{ } 
+	method{ efi }
+	format{ }
+	$lvmignore{ }	# Likely not needed but let's be careful
+	$gptonly{ } 	# [4]
+	.
+#1 1 1 free	# bios/grub. This is unused on EFI systems but required for GPT on non-EFI systems
+1 1 1 vfat	# [4]
+	# $primary{ } 
+	$reusemethod{ }
+	method{ biosgrub }
+	$lvmignore{ }	# Likely not needed but let's be careful
+	$gptonly{ } 	# [4]
+	.
+512 100 767 ext3
+	# $primary{ } 
+	$defaultignore{ }	# FIXME: I don't think this should be here!
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ ext3 }
+	moutpoint{ /boot }
+	$lvmignore{ }	# Likely not needed but let's be careful
+	.
+
+# LVM	16G 
+# I don't think this is needed but what do I know
+16384 100 -1 ext3 
+767 100 767 ext3
+	$defaultignore{ }
+	$primary{ } 
+	method{ lvm }
+	OPTIONAL: device{ /dev/sda }
+	vg_name{ @@VG_NAME@@ }
+	.
+
+50% 90 100% swap
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	$reusemethod{ }
+	method{ swap }
+	format{ }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ swap }
+	.
+
+1024M 90 2048M btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ root }
+	mountpoint{ / }
+	.
+
+4GB 90 8192 btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ usr }
+	mountpoint{ /usr }
+	.
+
+1024 90 2048 btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ var }
+	mountpoint{ /var }
+	.
+
+512 90 1024 btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ var_log }
+	mountpoint{ /var/log }
+	.
+
+512 90 1024 btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ var_log_audit }
+	mountpoint{ /var/log/audit }
+	.
+
+4096 90 16384 btrfs
+	$defaultignore{ }	# Not a partition
+	$lvmok{ }
+	method{ format }
+	format{ }
+	use_filesystem{ }
+	filesystem{ btrfs }
+	in_vg{ @@VG_NAME@@ }
+	lv_name{ home }
+	mountpoint{ /home }
+	.
+
+####
+
+What is "partman-auto/disk"
+
+8192 90 -1 lvm
+	.
+
+#1024 90 200% linux-swap
+	#method{ swap }
+	#format{ }
+	#.
