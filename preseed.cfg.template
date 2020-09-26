@@ -204,7 +204,7 @@ d-i clock-setup/ntp-server string @@NTP_SERVER@@
 
 # these are being asked:
 d-i partman-auto/automatically_partition select lvm
-d-i partman-auto/select_disk select /dev/@@BOOT_DRIVE@@
+d-i partman-auto/select_disk select /dev/@@BOOT_DEVICE@@
 d-i partman-partitioning/choose_label select gpt
 d-i partman-partitioning/default_label string gpt
 
@@ -214,7 +214,7 @@ d-i partman-partitioning/default_label string gpt
 # and not e.g. /dev/discs/disc0/disc).
 # For example, to use the first SCSI/SATA hard disk:
 # schallee: d-i partman-auto/disk string /dev/sda
-d-i partman-auto/disk string /dev/@@BOOT_DRIVE@@
+d-i partman-auto/disk string /dev/@@BOOT_DEVICE@@
 # In addition, you'll need to specify the method to use.
 # The presently available methods are:
 # - regular: use the usual partition types for your architecture
@@ -668,7 +668,9 @@ tasksel tasksel/first multiselect ssh-server
 # Individual additional packages to install
 #d-i pkgsel/include string openssh-server build-essential
 # schallee: we always want openssh-server
-d-i pkgsel/include string openssh-server
+# schallee: we always want python and python-apt for ansible
+# 		Technically python-apt will be installed automatically but let's do it here to avoid the package list cludge
+d-i pkgsel/include string openssh-server python python-apt
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
 #d-i pkgsel/upgrade select none
