@@ -1,0 +1,69 @@
+[submodule "partman/auto"]
+	path = partman/auto
+	url = https://salsa.debian.org/installer-team/partman-auto.git
+[submodule "partman/crypto"]
+	path = partman/crypto
+	url = https://salsa.debian.org/installer-team/partman-auto-crypto.git
+[submodule "partman/lvm"]
+	path = partman/lvm
+	url = https://salsa.debian.org/installer-team/partman-auto-lvm.git
+[submodule "partman/raid"]
+	path = partman/raid
+	url = https://salsa.debian.org/installer-team/partman-auto-raid.git
+[submodule "partman/base"]
+	path = partman/base
+	url = https://salsa.debian.org/installer-team/partman-base.git
+[submodule "partman/basicfilesystems"]
+	path = partman/basicfilesystems
+	url = https://salsa.debian.org/installer-team/partman-basicfilesystems.git
+[submodule "partman/basicmethods"]
+	path = partman/basicmethods
+	url = https://salsa.debian.org/installer-team/partman-basicmethods.git
+[submodule "partman/btrfs"]
+	path = partman/btrfs
+	url = https://salsa.debian.org/installer-team/partman-btrfs.git
+[submodule "partman/efi"]
+	path = partman/efi
+	url = https://salsa.debian.org/installer-team/partman-efi.git
+[submodule "partman/ext3"]
+	path = partman/ext3
+	url = https://salsa.debian.org/installer-team/partman-ext3.git
+[submodule "partman/iscsi"]
+	path = partman/iscsi
+	url = https://salsa.debian.org/installer-team/partman-iscsi.git
+[submodule "partman/jfs"]
+	path = partman/jfs
+	url = https://salsa.debian.org/installer-team/partman-jfs.git
+[submodule "partman/md"]
+	path = partman/md
+	url = https://salsa.debian.org/installer-team/partman-md.git
+[submodule "partman/multipath"]
+	path = partman/multipath
+	url = https://salsa.debian.org/installer-team/partman-multipath.git
+[submodule "partman/nbd"]
+	path = partman/nbd
+	url = https://salsa.debian.org/installer-team/partman-nbd.git
+[submodule "partman/newworld"]
+	path = partman/newworld
+	url = https://salsa.debian.org/installer-team/partman-newworld.git
+[submodule "partman/partitioning"]
+	path = partman/partitioning
+	url = https://salsa.debian.org/installer-team/partman-partitioning.git
+[submodule "partman/prep"]
+	path = partman/prep
+	url = https://salsa.debian.org/installer-team/partman-prep.git
+[submodule "partman/swapfile"]
+	path = partman/swapfile
+	url = https://salsa.debian.org/installer-team/partman-swapfile.git
+[submodule "partman/target"]
+	path = partman/target
+	url = https://salsa.debian.org/installer-team/partman-target.git
+[submodule "partman/ufs"]
+	path = partman/ufs
+	url = https://salsa.debian.org/installer-team/partman-ufs.git
+[submodule "partman/xfs"]
+	path = partman/xfs
+	url = https://salsa.debian.org/installer-team/partman-xfs.git
+[submodule "partman/zfs"]
+	path = partman/zfs
+	url = https://salsa.debian.org/installer-team/partman-zfs.git
